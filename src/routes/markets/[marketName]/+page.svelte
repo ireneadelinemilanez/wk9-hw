@@ -83,7 +83,7 @@
         <a href="https://data.cityofnewyork.us/Health/NYC-Farmers-Markets/8vwk-6iz2/about_data" target="_blank">via New York City's open data portal</a>.
       </p>
       <p>
-        The farmer's markets listed by the city were filtered to include only Brooklyn markets updated in 2025. The data is current as of February 2026.
+        The farmer's markets listed by the city were filtered to include only Brooklyn markets. The data is current as of February 2026.
       </p>
       <p>The code that executed the analysis is available as open source on GitHub <a href="https://github.com/ireneadelinemilanez/wk9-hw">here</a>.</p>
     </MethodologyBox>
