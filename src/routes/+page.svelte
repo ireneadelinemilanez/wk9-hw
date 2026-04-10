@@ -1,122 +1,79 @@
-<!--
-@component
-This is your page!
--->
 <script>
-  // Import all the news furniture components
-  import ArticleHeader from '$lib/components/ArticleHeader.svelte';
-  import ArticleBody from '$lib/components/ArticleBody.svelte';
-  import Blockquote from '$lib/components/Blockquote.svelte';
-  import Image from '$lib/components/Image.svelte';
-  import RelatedLinks from '$lib/components/RelatedLinks.svelte';
+  import { base } from '$app/paths';
+  let { data } = $props();
 
-  // Article metadata
-  let headline = 'Become a force for good. Join our next class.';
-  let byline = 'NYCity News Service';
-  let pubDate = '2026-01-31';
+  console.log(`Loaded ${data.markets.length} markets`);
+  console.log("First record:", data.markets[0]);
 
-  // Related stories
-  const relatedStories = [
-    {
-      headline:
-        "How America's top news organizations escape rigid publishing systems to design beautiful data-driven stories on deadline.",
-      href: 'https://palewi.re/docs/coding-the-news/',
-    },
-    {
-      headline:
-        'How to install, configure and use Visual Studio Code, GitHub and Copilot',
-      href: 'https://palewi.re/docs/coding-the-news/scripts/week-1/',
-    },
-    {
-      headline: 'How to publish a website with Node.JS and GitHub Actions',
-      href: 'https://palewi.re/docs/coding-the-news/scripts/week-2/',
-    },
-  ];
+  import DatabaseHeader from '$lib/components/DatabaseHeader.svelte';
+  import AlphabeticalList from '$lib/components/AlphabeticalList.svelte';
+  import AlphabeticalCard from '$lib/components/AlphabeticalCard.svelte';
+  import SearchInput from '$lib/components/SearchInput.svelte';
+  import MethodologyBox from '$lib/components/MethodologyBox.svelte';
+
+
+  let searchQuery = $state('');
+
+  let top20 = data.markets
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, 20);
+
+  let alphabeticalMarkets = $derived(
+    data.markets
+      .map((market, index) => ({ market, index }))
+      .filter(({ market }) =>
+        searchQuery === '' ||
+        market.daysOfOperation
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
+      )
+      .sort((a, b) => a.market.marketName.localeCompare(b.market.marketName))
+  );
 </script>
 
-<!-- This sets the page title in the browser tab -->
-<svelte:head>
-  <title>{headline} | NYCity News Service</title>
-  <meta
-    name="description"
-    content="At the Craig Newmark Graduate School of Journalism at the City University of New York, change is in our DNA. That comes of being born in 2006, as the digital revolution was transforming our profession in ways none of us could have imagined."
-  />
-</svelte:head>
+<DatabaseHeader
+  kicker="Data Explorer"
+  headline="Find a Farmer's Market"
+  description="Look for an open farmer's market in Brooklyn"
+  byline="By Irene Adeline Milanez"
+  date="April 10, 2026"
+  >
 
-<!-- Your page content goes here -->
+   <SearchInput
+    bind:value={searchQuery}
+    placeholder="What day is it today? (e.g., Saturday, Sunday, Wednesday)..."
+  />
+</DatabaseHeader>
+
 <div class="container">
-  <!-- Article Header: Headline, byline, and publication date -->
-  <ArticleHeader {headline} {byline} {pubDate} />
 
-  <!-- Lead Image: Animated gif of students at the journalism school -->
-  <Image
-    src="/example-photo.gif"
-    alt="The Craig Newmark Graduate School of Journalism is at 219 West 40th Street in Midtown Manhattan."
-    caption="The Craig Newmark Graduate School of Journalism is at 219 West 40th Street in Midtown Manhattan."
-    credit="Craig Newmark Graduate School of Journalism"
-  />
 
-  <!-- Article Body: The main story text with proper typography -->
-  <ArticleBody>
+  <AlphabeticalList title="Farmer's Markets">
+  {#each alphabeticalMarkets as { market, index } (market.marketName)}
+    <AlphabeticalCard
+      title={market.marketName}
+      description={`${market.daysOfOperation}`}
+      href="{base}/markets/{encodeURIComponent(market.marketName)}"
+    />
+  {/each}
+</AlphabeticalList>
+
+<MethodologyBox>
     <p>
-      At the Craig Newmark Graduate School of Journalism at the City University
-      of New York, change is in our DNA. That comes of being born in 2006, as
-      the digital revolution was transforming our profession in ways none of us
-      could have imagined.
+      The data on this page comes from the Department of Health and Mental Hygiene
+      <a href="https://data.cityofnewyork.us/Health/NYC-Farmers-Markets/8vwk-6iz2/about_data" target="_blank">via New York City's open data portal</a>.
     </p>
-
     <p>
-      We fashioned a school to teach the latest storytelling, entrepreneurial,
-      and technological skills alongside reporting, writing, and ethics. Beyond
-      that, we’ve crafted a culture that spurns complacency, that isn’t afraid
-      to pivot before the ground under us shifts.
+      The farmer's markets listed by the city were filtered to include only Brooklyn markets updated in 2025. The data is current as of February 2026.
     </p>
+    <p>The code that executed the analysis is available as open source on GitHub <a href="https://github.com/ireneadelinemilanez/wk9-hw">here</a>.</p>
+  </MethodologyBox>
 
-    <p>
-      Our mission is to serve the public interest – by training new journalists
-      from varied economic, racial, and cultural backgrounds who will bring
-      much-needed diversity to newsrooms, by helping mid-career journalists
-      retool their skills, and by partnering with other media organizations to
-      find new paths to excellence.
-    </p>
-
-    <Blockquote attribution="Craig Newmark Graduate School of Journalism">
-      <p>We invite you to be part of our world.</p>
-    </Blockquote>
-
-    <p>
-      Our low tuition rates, along with the added backing of private donors,
-      allow candidates for our master’s degrees in journalism and engagement
-      journalism to receive a world-class education at an affordable price. We
-      also offer a unique bilingual master’s in journalism for students fluent
-      in English and Spanish.
-    </p>
-
-    <p>
-      Our three media centers provide research, training, thought leadership,
-      industry meet-ups, and financial support for quality journalistic work.
-    </p>
-
-    <p>
-      We also offer a robust professional education program through regular
-      evening and weekend workshops. And we support in-depth reporting projects
-      of professional journalists through fellowship grants.
-    </p>
-
-    <p>
-      Classes are led by accomplished full-time faculty and adjuncts, who tap
-      their networks to help students and graduates find internships, freelance
-      opportunities and — the ultimate prize — jobs.
-    </p>
-
-    <p>
-      At a time when our profession is reeling from financial pressures and lack
-      of trust, the Newmark Graduate School of Journalism is committed to
-      producing the next generation of skilled, ethically minded, and diverse
-      journalists.
-    </p>
-  </ArticleBody>
-
-  <!-- Related Stories: Links to other articles -->
-  <RelatedLinks title="Related Stories" links={relatedStories} />
 </div>
+
+<style>
+  .container {
+    max-width: var(--max-width-wide);
+    margin: 0 auto;
+  }
+</style>
